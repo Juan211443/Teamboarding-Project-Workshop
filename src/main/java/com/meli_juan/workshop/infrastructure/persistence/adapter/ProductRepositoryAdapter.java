@@ -1,5 +1,7 @@
 package com.meli_juan.workshop.infrastructure.persistence.adapter;
 
+import com.meli_juan.workshop.domain.exception.NegativePriceException;
+import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
 import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
 import com.meli_juan.workshop.infrastructure.persistence.entity.ProductEntity;
@@ -9,9 +11,10 @@ import com.meli_juan.workshop.infrastructure.util.PatchUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 
+@Repository
 public class ProductRepositoryAdapter implements ProductRepository {
 
     private final ProductJpaRepository jpaRepository;
@@ -38,7 +41,7 @@ public class ProductRepositoryAdapter implements ProductRepository {
         return  jpaRepository.findById(id).stream()
                 .map(entityMapper::toDomain)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Product with id: " + id + " not found"));
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ProductRepositoryAdapter implements ProductRepository {
         return jpaRepository.findById(id)
                 .map(productEntity ->
                         entityMapper.toDomain(jpaRepository.save(entityMapper.toEntity(currentproduct))))
-                .orElseThrow(() -> new RuntimeException("Product with id: " + id + " not found"));
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
@@ -57,7 +60,7 @@ public class ProductRepositoryAdapter implements ProductRepository {
                     PatchUtils.copyNonNullProperties(currentProduct, product);
                     return entityMapper.toDomain(jpaRepository.save(entityMapper.toEntity(product)));
                 })
-                .orElseThrow(() -> new RuntimeException("Product with id: " + id + " not found"));
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
@@ -67,15 +70,16 @@ public class ProductRepositoryAdapter implements ProductRepository {
                     jpaRepository.deleteById(id);
                     return "Product with id: " + id + " deleted successfully";
                 })
-                .orElseThrow(() -> new RuntimeException("Product with id: " + id + " not found"));
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
     public Product getByName(String name) {
         ProductEntity product = jpaRepository.findByName(name);
+        //TODO: Logica invertida;
         if(product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
             return entityMapper.toDomain(product);
         }
-        return null;
+        throw new NegativePriceException(product.getName());
     }
 }

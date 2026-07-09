@@ -23,7 +23,7 @@ public class ProductController {
     private final ProductRequestMapper requestMapper;
     private final ProductResponseMapper responseMapper;
 
-    //TODO: Implementar Exceptions;
+    //TODO: Logs;
     //TODO: Tests;
 
     public ProductController(
