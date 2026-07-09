@@ -1,36 +1,32 @@
 package com.meli_juan.workshop.infrastructure.persistence.adapter;
 
-import com.meli_juan.workshop.domain.exception.NegativePriceException;
 import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
 import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
-import com.meli_juan.workshop.infrastructure.persistence.entity.ProductEntity;
 import com.meli_juan.workshop.infrastructure.persistence.jpa.ProductJpaRepository;
 import com.meli_juan.workshop.infrastructure.persistence.mapper.ProductEntityMapper;
 import com.meli_juan.workshop.infrastructure.util.PatchUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import java.math.BigDecimal;
+
+import java.util.Optional;
 
 @Slf4j
 @Repository
+@RequiredArgsConstructor
 public class ProductRepositoryAdapter implements ProductRepository {
 
     private final ProductJpaRepository jpaRepository;
     private final ProductEntityMapper entityMapper;
 
-    public ProductRepositoryAdapter(ProductJpaRepository jpaRepository, ProductEntityMapper entityMapper) {
-        this.jpaRepository = jpaRepository;
-        this.entityMapper = entityMapper;
-    }
-
     @Override
     public Page<Product> findAll(int page, int size) {
-        Pageable pageRequest = PageRequest.of(page, size);
         log.debug("Fetching products - page={}, size={}", page, size);
+        Pageable pageRequest = PageRequest.of(page, size);
         return jpaRepository.findAll(pageRequest).map(entityMapper::toDomain);
     }
 
@@ -43,19 +39,19 @@ public class ProductRepositoryAdapter implements ProductRepository {
     @Override
     public Product find(long id) {
         log.debug("Finding product by id={}", id);
-        return  jpaRepository.findById(id).stream()
+        return  jpaRepository.findById(id)
                 .map(entityMapper::toDomain)
-                .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
     public Product update(Product currentProduct, long id) {
         log.debug("Updating product id={}", id);
-        return jpaRepository.findById(id)
-                .map(productEntity ->
-                        entityMapper.toDomain(jpaRepository.save(entityMapper.toEntity(currentProduct))))
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        if (!jpaRepository.existsById(id)) {
+            throw new ProductNotFoundException(id);
+        }
+        currentProduct.setId(id);
+        return entityMapper.toDomain(jpaRepository.save(entityMapper.toEntity(currentProduct)));
     }
 
     @Override
@@ -71,24 +67,17 @@ public class ProductRepositoryAdapter implements ProductRepository {
     }
 
     @Override
-    public String delete(Long id) {
-        log.debug("Deleting product id={}", id);
-        return jpaRepository.findById(id)
-                .map(productEntity -> {
-                    jpaRepository.deleteById(id);
-                    return "Product with id: " + id + " deleted successfully";
-                })
-                .orElseThrow(() -> new ProductNotFoundException(id));
+    public void delete(Long id) {
+        if (!jpaRepository.existsById(id)) {
+            throw new ProductNotFoundException(id);
+        }
+        jpaRepository.deleteById(id);
     }
 
     @Override
     public Product getByName(String name) {
-        log.debug("Finding product by name={}", name);
-        ProductEntity product = jpaRepository.findByName(name);
-        //TODO: Logica invertida;
-        if(product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            return entityMapper.toDomain(product);
-        }
-        throw new NegativePriceException(product.getName());
+        return Optional.ofNullable(jpaRepository.findByName(name))
+                .map(entityMapper::toDomain)
+                .orElseThrow(() -> new ProductNotFoundException());
     }
 }

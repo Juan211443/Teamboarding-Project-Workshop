@@ -1,18 +1,21 @@
 package com.meli_juan.workshop.domain.useCase;
 
+import com.meli_juan.workshop.domain.exception.NegativePriceException;
 import com.meli_juan.workshop.domain.model.Product;
+import com.meli_juan.workshop.domain.port.ProductRepository;
 import com.meli_juan.workshop.domain.port.ProductUseCasePort;
 import com.meli_juan.workshop.infrastructure.persistence.adapter.ProductRepositoryAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 public class ProductUseCase implements ProductUseCasePort {
-    private final ProductRepositoryAdapter repository;
+    private final ProductRepository repository;
 
     public ProductUseCase(ProductRepositoryAdapter repository){
         this.repository = repository;
@@ -52,15 +55,17 @@ public class ProductUseCase implements ProductUseCasePort {
     }
 
     @Transactional
-    public String delete(Long id) {
-        String result = repository.delete(id);
+    public void delete(Long id) {
         log.info("Product deleted: id={}", id);
-        return result;
+        repository.delete(id);
     }
 
     @Override
     public Product getByName(String name) {
         Product product = repository.getByName(name);
+        if (product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+            throw new NegativePriceException(product.getName());
+        }
         log.info("Product with name={} was found: {}", name, product);
         return product;
     }
