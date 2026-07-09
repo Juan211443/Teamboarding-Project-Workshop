@@ -9,6 +9,6 @@ public interface ProductUseCasePort {
     Product create(Product product);
     Product update(Product currentProduct, long id);
     Product patch(Product currentProduct, long id);
-    String delete(Long id);
+    void delete(Long id);
     Product getByName(String name);
 }
