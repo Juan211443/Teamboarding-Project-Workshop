@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 @Slf4j
@@ -78,6 +77,6 @@ public class ProductRepositoryAdapter implements ProductRepository {
     public Product getByName(String name) {
         return Optional.ofNullable(jpaRepository.findByName(name))
                 .map(entityMapper::toDomain)
-                .orElseThrow(() -> new ProductNotFoundException());
+                .orElseThrow(ProductNotFoundException::new);
     }
 }
