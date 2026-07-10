@@ -21,8 +21,16 @@ public class ProductRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    private ProductEntity createProduct(String name, double price) {
+    private ProductEntity createProductWithoutId(String name, double price) {
         ProductEntity product = new ProductEntity();
+        product.setName(name);
+        product.setPrice(BigDecimal.valueOf(price));
+        return product;
+    }
+
+    private ProductEntity createCompleteProduct(Long id, String name, double price) {
+        ProductEntity product = new ProductEntity();
+        product.setId(id);
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
         return product;
@@ -32,11 +40,11 @@ public class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        laptopId = entityManager.persist(createProduct("Laptop", 20.0)).getId();
-        phoneId = entityManager.persist(createProduct("Phone", 20.0)).getId();
-        carId = entityManager.persist(createProduct("Car", 30.0)).getId();
-        bedId = entityManager.persist(createProduct("Bed", 40.0)).getId();
-        monitorId = entityManager.persist(createProduct("Monitor", 50.0)).getId();
+        laptopId = entityManager.persist(createProductWithoutId("Laptop", 20.0)).getId();
+        phoneId = entityManager.persist(createProductWithoutId("Phone", 20.0)).getId();
+        carId = entityManager.persist(createProductWithoutId("Car", 30.0)).getId();
+        bedId = entityManager.persist(createProductWithoutId("Bed", 40.0)).getId();
+        monitorId = entityManager.persist(createProductWithoutId("Monitor", 50.0)).getId();
         entityManager.flush();
     }
 
@@ -55,7 +63,7 @@ public class ProductRepositoryTest {
 
     @Test
     void save_saveProduct_returnProductInserted() {
-        ProductEntity product = createProduct("Table", 60.0);
+        ProductEntity product = createProductWithoutId("Table", 60.0);
         ProductEntity savedProduct = entityManager.persist(product);
         entityManager.flush();
         assertEquals("Table", savedProduct.getName());
@@ -93,10 +101,8 @@ public class ProductRepositoryTest {
     @Test
     void update_productDoesNotExist_throwsException() {
         assertThrows(Exception.class, () -> {
-            ProductEntity product = new ProductEntity();
-            product.setId(999999L);
-            product.setName("Nonexistent");
-            product.setPrice(BigDecimal.valueOf(100.0));
+            ProductEntity product = createCompleteProduct(
+                    999999L, "Nonexistent", 101.0);
             entityManager.merge(product);
             entityManager.flush();
         });
@@ -104,10 +110,7 @@ public class ProductRepositoryTest {
 
     @Test
     void update_productExists_returnProduct() {
-        ProductEntity product = new ProductEntity();
-        product.setId(phoneId);
-        product.setName("existent");
-        product.setPrice(BigDecimal.valueOf(100.0));
+        ProductEntity product = createCompleteProduct(phoneId,"existent", 100.0);
         entityManager.merge(product);
         entityManager.flush();
         ProductEntity found = entityManager.find(ProductEntity.class, phoneId);
