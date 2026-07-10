@@ -25,7 +25,7 @@ public class ProductController {
     private final ProductRequestMapper requestMapper;
     private final ProductResponseMapper responseMapper;
 
-    //TODO: Tests unitarios, integracion, repository;
+    //TODO: Tests unitarios, service, integracion, repository;
     //TODO: Swagger;
     //TODO: Agregar entidades;
     //TODO: Levantar backend en docker;
