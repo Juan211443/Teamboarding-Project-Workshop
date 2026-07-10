@@ -25,7 +25,10 @@ public class ProductController {
     private final ProductRequestMapper requestMapper;
     private final ProductResponseMapper responseMapper;
 
-    //TODO: Tests;
+    //TODO: Tests unitarios, integracion, repository;
+    //TODO: Swagger;
+    //TODO: Agregar entidades;
+    //TODO: Levantar backend en docker;
 
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> getAll(
