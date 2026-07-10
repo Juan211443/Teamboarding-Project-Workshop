@@ -3,7 +3,7 @@ package com.meli_juan.workshop.infrastructure.persistence.adapter;
 import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
 import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
-import com.meli_juan.workshop.infrastructure.persistence.jpa.ProductJpaRepository;
+import com.meli_juan.workshop.infrastructure.persistence.repository.ProductJpaRepository;
 import com.meli_juan.workshop.infrastructure.persistence.mapper.ProductEntityMapper;
 import com.meli_juan.workshop.infrastructure.util.PatchUtils;
 import lombok.RequiredArgsConstructor;
