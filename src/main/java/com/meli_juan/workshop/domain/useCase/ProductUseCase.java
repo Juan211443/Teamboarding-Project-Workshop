@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class ProductUseCase implements ProductUseCasePort {
     private final ProductRepository repository;
 
-    public ProductUseCase(ProductRepositoryAdapter repository){
+    public ProductUseCase(ProductRepository repository){
         this.repository = repository;
     }
 
