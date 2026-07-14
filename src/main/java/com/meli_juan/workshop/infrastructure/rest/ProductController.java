@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.net.URI;
 
 @Slf4j
 @RestController
@@ -40,7 +41,7 @@ public class ProductController {
     }
 
     @GetMapping({"/{id}"})
-    public ResponseEntity<ProductResponseDto> getById(@PathVariable Long id){
+    public ResponseEntity<ProductResponseDto> getById(@PathVariable long id){
         log.debug("GET /api/products/{}", id);
         return ResponseEntity.ok(responseMapper.toResponse(productUseCasePort.getById(id)));
     }
@@ -48,23 +49,24 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDto> create(@Valid @RequestBody ProductRequestDto request){
         log.debug("POST /api/products - request: {}", request);
-        return ResponseEntity.ok(responseMapper.toResponse(productUseCasePort.create(requestMapper.toDomain(request))));
+        return ResponseEntity.created(URI.create("/api/products/" + productUseCasePort.create(requestMapper.toDomain(request)).getId()))
+                .body(responseMapper.toResponse(productUseCasePort.create(requestMapper.toDomain(request))));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> update(@PathVariable Long id, @Valid @RequestBody ProductRequestDto product) {
+    public ResponseEntity<ProductResponseDto> update(@PathVariable long id, @Valid @RequestBody ProductRequestDto product) {
         log.debug("PUT /api/products/{} - request: {}", id, product);
         return ResponseEntity.ok().body(responseMapper.toResponse(productUseCasePort.update(requestMapper.toDomain(product), id)));
     }
 
     @PatchMapping("/{id}")
-    ResponseEntity<ProductResponseDto> patch(@PathVariable Long id, @Valid @RequestBody ProductNullableRequestDto product){
+    ResponseEntity<ProductResponseDto> patch(@PathVariable long id, @Valid @RequestBody ProductNullableRequestDto product){
         log.debug("PATCH /api/products/{} - request: {}", id, product);
         return ResponseEntity.ok().body(responseMapper.toResponse(productUseCasePort.patch(requestNullableMapper.toNullableDomain(product), id)));
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> delete(@PathVariable Long id){
+    ResponseEntity<Void> delete(@PathVariable long id){
         log.debug("DELETE /api/products/{}", id);
         productUseCasePort.delete(id);
         return ResponseEntity.noContent().build();

@@ -4,7 +4,6 @@ import com.meli_juan.workshop.domain.exception.NegativePriceException;
 import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
 import com.meli_juan.workshop.domain.port.ProductUseCasePort;
-import com.meli_juan.workshop.infrastructure.persistence.adapter.ProductRepositoryAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -55,7 +54,7 @@ public class ProductUseCase implements ProductUseCasePort {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(long id) {
         log.info("Product deleted: id={}", id);
         repository.delete(id);
     }
