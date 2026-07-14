@@ -103,6 +103,39 @@ public class ProductE2ETest {
     }
 
     @Test
+    void get_searchByName_existingProduct_returns200() {
+        String uniqueName = "SearchE2E_" + System.nanoTime();
+        ProductResponseDto created = createProduct(uniqueName, 120.50);
+
+        ProductResponseDto found = getClient().get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/products/searchByName")
+                        .queryParam("name", uniqueName)
+                        .build())
+                .retrieve()
+                .body(ProductResponseDto.class);
+
+        assertNotNull(found);
+        assertEquals(uniqueName, found.getName());
+        assertEquals(created.getId(), found.getId());
+        assertEquals(0, BigDecimal.valueOf(120.50).compareTo(found.getPrice()));
+    }
+
+    @Test
+    void get_searchByName_nonExistingProduct_returns404() {
+        HttpClientErrorException ex = assertThrows(HttpClientErrorException.class,
+                () -> getClient().get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/api/products/searchByName")
+                                .queryParam("name", "NonExistent_" + System.nanoTime())
+                                .build())
+                        .retrieve()
+                        .body(String.class));
+
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
+    @Test
     void put_updateProduct_returns200() {
         ProductResponseDto created = createProduct("OldName", 100.00);
 
