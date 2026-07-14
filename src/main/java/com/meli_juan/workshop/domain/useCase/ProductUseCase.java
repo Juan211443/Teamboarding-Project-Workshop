@@ -60,7 +60,6 @@ public class ProductUseCase implements ProductUseCasePort {
         repository.delete(id);
     }
 
-    @Override
     public Product getByName(String name) {
         Product product = repository.getByName(name);
         if (product.getPrice().compareTo(BigDecimal.ZERO) < 0) {

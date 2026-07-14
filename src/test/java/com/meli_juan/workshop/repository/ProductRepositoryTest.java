@@ -10,6 +10,8 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -64,8 +66,7 @@ public class ProductRepositoryTest {
     @Test
     void save_saveProduct_returnProductInserted() {
         ProductEntity product = createProductWithoutId("Table", 60.0);
-        ProductEntity savedProduct = entityManager.persist(product);
-        entityManager.flush();
+        ProductEntity savedProduct = productRepository.save(product);
         assertEquals("Table", savedProduct.getName());
         assertEquals(BigDecimal.valueOf(60.0), savedProduct.getPrice());
     }
@@ -99,13 +100,18 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    void update_productDoesNotExist_throwsException() {
-        assertThrows(Exception.class, () -> {
-            ProductEntity product = createCompleteProduct(
-                    999999L, "Nonexistent", 101.0);
-            entityManager.merge(product);
-            entityManager.flush();
-        });
+    void patch_onlyName_updatesNameKeepsPrice() {
+        ProductEntity original = entityManager.find(ProductEntity.class, carId);
+        BigDecimal originalPrice = Objects.requireNonNull(original).getPrice();
+
+        original.setName("Truck");
+        productRepository.save(original);
+        entityManager.flush();
+
+        ProductEntity patched = entityManager.find(ProductEntity.class, carId);
+        assertNotNull(originalPrice);
+        assertEquals("Truck", Objects.requireNonNull(patched).getName());
+        assertEquals(originalPrice, patched.getPrice());
     }
 
     @Test
