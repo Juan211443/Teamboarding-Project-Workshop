@@ -26,7 +26,6 @@ public class ProductController {
     private final ProductRequestMapper requestMapper;
     private final ProductResponseMapper responseMapper;
 
-    //TODO: Tests unitarios, service, integracion, repository;
     //TODO: Swagger;
     //TODO: Agregar entidades;
     //TODO: Levantar backend en docker;
@@ -49,8 +48,9 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDto> create(@Valid @RequestBody ProductRequestDto request){
         log.debug("POST /api/products - request: {}", request);
-        return ResponseEntity.created(URI.create("/api/products/" + productUseCasePort.create(requestMapper.toDomain(request)).getId()))
-                .body(responseMapper.toResponse(productUseCasePort.create(requestMapper.toDomain(request))));
+        ProductResponseDto response = responseMapper.toResponse(productUseCasePort.create(requestMapper.toDomain(request)));
+        return ResponseEntity.created(URI.create("/api/products/" + response.getId()))
+                .body(response);
     }
 
     @PutMapping("/{id}")
