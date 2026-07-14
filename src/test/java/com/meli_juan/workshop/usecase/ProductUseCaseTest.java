@@ -1,8 +1,8 @@
-package com.meli_juan.workshop.useCase;
+package com.meli_juan.workshop.usecase;
 
 import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
-import com.meli_juan.workshop.domain.useCase.ProductUseCase;
+import com.meli_juan.workshop.domain.usecase.ProductUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,12 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import java.math.BigDecimal;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductUseCaseTests {
+public class ProductUseCaseTest {
 
     @Mock
     private ProductRepository repository;
