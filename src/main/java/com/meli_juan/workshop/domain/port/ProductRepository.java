@@ -9,6 +9,6 @@ public interface ProductRepository {
     Product find(long id);
     Product update(Product product, long id);
     Product patch(Product currentProduct, long id);
-    void delete(Long id);
+    void delete(long id);
     Product getByName(String name);
 }

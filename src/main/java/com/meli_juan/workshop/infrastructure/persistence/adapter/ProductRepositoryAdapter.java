@@ -66,7 +66,7 @@ public class ProductRepositoryAdapter implements ProductRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         if (!jpaRepository.existsById(id)) {
             throw new ProductNotFoundException(id);
         }
