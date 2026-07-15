@@ -48,7 +48,7 @@ public class ProductController {
         return ResponseEntity.ok().body(productUseCasePort.getAll(page, size).map(responseMapper::toResponse));
     }
 
-    @GetMapping({"/{id}"})
+    @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getById(@PathVariable long id){
         log.debug("GET /api/products/{}", id);
         return ResponseEntity.ok(responseMapper.toResponse(productUseCasePort.getById(id)));

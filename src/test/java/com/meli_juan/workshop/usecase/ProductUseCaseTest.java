@@ -1,5 +1,6 @@
 package com.meli_juan.workshop.usecase;
 
+import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
 import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
 import com.meli_juan.workshop.domain.usecase.ProductUseCase;
@@ -86,13 +87,13 @@ public class ProductUseCaseTest {
     }
 
     @Test
-    void getById_noProducts_returnNull(){
-        when(repository.find(1L)).thenReturn(null);
+    void getById_noProducts_returnException(){
+        when(repository.find(1L)).thenThrow(new ProductNotFoundException(1L));
 
-        Product result = useCase.getById(1L);
+        ProductNotFoundException ex = assertThrows(ProductNotFoundException.class, () -> useCase.getById(1L));
 
         verify(repository).find(1L);
-        assertNull(result);
+        assertTrue(ex.getMessage().contains("1"));
     }
 
     @Test
