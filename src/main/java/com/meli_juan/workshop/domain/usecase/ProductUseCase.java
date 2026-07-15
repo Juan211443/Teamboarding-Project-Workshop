@@ -1,4 +1,4 @@
-package com.meli_juan.workshop.domain.useCase;
+package com.meli_juan.workshop.domain.usecase;
 
 import com.meli_juan.workshop.domain.exception.NegativePriceException;
 import com.meli_juan.workshop.domain.model.Product;
