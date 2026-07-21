@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import javax.sql.DataSource;
 
 @Configuration
@@ -26,9 +25,11 @@ public class ReadOnlyDataSourceConfig {
         dataSource.setUsername(username);
         dataSource.setPassword(password);
         dataSource.setReadOnly(true);
-        dataSource.setMaximumPoolSize(5);
+        final int MAXIMUM_POOL_SIZE = 5;
+        dataSource.setMaximumPoolSize(MAXIMUM_POOL_SIZE);
         dataSource.setPoolName("ReadOnlyPool");
-        dataSource.setConnectionTimeout(5000);
+        final int CONNECTION_TIMEOUT = 5000;
+        dataSource.setConnectionTimeout(CONNECTION_TIMEOUT);
         return dataSource;
     }
 }
