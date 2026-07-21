@@ -7,7 +7,6 @@ import com.meli_juan.workshop.infrastructure.persistence.entity.OrderItemEntity;
 import com.meli_juan.workshop.infrastructure.persistence.entity.ProductEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Context;
 import java.util.List;
 
 @Mapper(componentModel = "spring")

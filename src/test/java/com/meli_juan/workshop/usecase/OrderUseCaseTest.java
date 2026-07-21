@@ -1,7 +1,6 @@
 package com.meli_juan.workshop.usecase;
 
 import com.meli_juan.workshop.domain.exception.OrderNotFoundException;
-import com.meli_juan.workshop.domain.exception.OrderNotFoundException;
 import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
 import com.meli_juan.workshop.domain.model.Order;
 import com.meli_juan.workshop.domain.model.OrderItem;
