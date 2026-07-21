@@ -23,6 +23,11 @@ import static org.mockito.Mockito.when;
 
 class ReadOnlyConnectionHealthCheckTest {
 
+    private static final int FUTURE_TIMEOUT_SECONDS = 5;
+    private static final int RETRY_FUTURE_TIMEOUT_SECONDS = 15;
+    private static final int EXHAUSTED_RETRIES_FUTURE_TIMEOUT_SECONDS = 30;
+    private static final int SUCCESSFUL_ATTEMPT_NUMBER = 3;
+
     @Test
     @DisplayName("Should establish read-only connection successfully on first attempt")
     void getConnectionAsync_healthyDataSource_returnsConnection() throws Exception {
@@ -33,7 +38,7 @@ class ReadOnlyConnectionHealthCheckTest {
         ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
-        Connection result = future.get(5, TimeUnit.SECONDS);
+        Connection result = future.get(FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         assertNotNull(result);
         verify(mockConnection).setReadOnly(true);
@@ -51,7 +56,7 @@ class ReadOnlyConnectionHealthCheckTest {
         ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
-        Connection result = future.get(5, TimeUnit.SECONDS);
+        Connection result = future.get(FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         verify(mockConnection).setReadOnly(true);
         assertTrue(result.isReadOnly());
@@ -66,7 +71,7 @@ class ReadOnlyConnectionHealthCheckTest {
 
         when(mockDataSource.getConnection()).thenAnswer(invocation -> {
             int attempt = callCount.incrementAndGet();
-            if (attempt < 3) {
+            if (attempt < SUCCESSFUL_ATTEMPT_NUMBER) {
                 throw new SQLException("Connection refused (attempt " + attempt + ")");
             }
             return mockConnection;
@@ -75,11 +80,11 @@ class ReadOnlyConnectionHealthCheckTest {
         ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
-        Connection result = future.get(15, TimeUnit.SECONDS);
+        Connection result = future.get(RETRY_FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         assertNotNull(result);
         verify(mockConnection).setReadOnly(true);
-        assertEquals(3, callCount.get());
+        assertEquals(SUCCESSFUL_ATTEMPT_NUMBER, callCount.get());
     }
 
     @Test
@@ -98,7 +103,7 @@ class ReadOnlyConnectionHealthCheckTest {
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
         ExecutionException exception = assertThrows(ExecutionException.class,
-                () -> future.get(30, TimeUnit.SECONDS));
+                () -> future.get(EXHAUSTED_RETRIES_FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         assertInstanceOf(SQLException.class, exception.getCause());
     }
