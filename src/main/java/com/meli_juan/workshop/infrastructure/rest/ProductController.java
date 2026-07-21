@@ -36,7 +36,6 @@ public class ProductController {
     private final ProductResponseMapper responseMapper;
 
     //TODO: Swagger;
-    //TODO: Agregar entidades;
     //TODO: Levantar backend en docker;
 
     @GetMapping

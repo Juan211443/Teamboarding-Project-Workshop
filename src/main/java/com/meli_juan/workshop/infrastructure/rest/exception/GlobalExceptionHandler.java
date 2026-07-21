@@ -1,6 +1,7 @@
 package com.meli_juan.workshop.infrastructure.rest.exception;
 
 import com.meli_juan.workshop.domain.exception.NegativePriceException;
+import com.meli_juan.workshop.domain.exception.OrderNotFoundException;
 import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
 import com.meli_juan.workshop.infrastructure.rest.dto.ErrorResponseDto;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -14,6 +15,12 @@ import java.time.Instant;
 public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleNotFound(ProductNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDto(Instant.now(), 404 , exception.getMessage()));
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleOrderNotFound(OrderNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponseDto(Instant.now(), 404 , exception.getMessage()));
     }
