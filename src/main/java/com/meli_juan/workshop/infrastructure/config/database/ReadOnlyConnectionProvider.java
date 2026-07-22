@@ -2,16 +2,15 @@ package com.meli_juan.workshop.infrastructure.config.database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Qualifier;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class ReadOnlyConnectionProvider {
@@ -21,14 +20,12 @@ public class ReadOnlyConnectionProvider {
     private static final long INITIAL_DELAY_MS = 1000;
 
     private final DataSource readOnlyDataSource;
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-        Thread t = new Thread(r, "readonly-connection-retry");
-        t.setDaemon(true);
-        return t;
-    });
+    private final TaskScheduler taskScheduler;
 
-    public ReadOnlyConnectionProvider(@Qualifier("readOnlyDataSource") DataSource readOnlyDataSource) {
+    public ReadOnlyConnectionProvider(@Qualifier("readOnlyDataSource") DataSource readOnlyDataSource,
+                                      @Qualifier("readOnlyRetryScheduler") TaskScheduler taskScheduler) {
         this.readOnlyDataSource = readOnlyDataSource;
+        this.taskScheduler = taskScheduler;
     }
 
     @Async
@@ -50,7 +47,7 @@ public class ReadOnlyConnectionProvider {
             if (attempt < MAX_RETRIES) {
                 long delay = INITIAL_DELAY_MS * (long) Math.pow(2, attempt - 1);
                 log.info("Retrying read-only connection in {} ms...", delay);
-                scheduler.schedule(() -> attemptConnection(attempt + 1, future), delay, TimeUnit.MILLISECONDS);
+                taskScheduler.schedule(() -> attemptConnection(attempt + 1, future), Instant.now().plusMillis(delay));
             } else {
                 log.error("Failed to establish read-only database connection after {} attempts", MAX_RETRIES);
                 future.completeExceptionally(e);

@@ -3,6 +3,8 @@ package com.meli_juan.workshop.healthCheck;
 import com.meli_juan.workshop.infrastructure.config.database.ReadOnlyConnectionProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterEach;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,6 +30,21 @@ class ReadOnlyConnectionHealthCheckTest {
     private static final int EXHAUSTED_RETRIES_FUTURE_TIMEOUT_SECONDS = 30;
     private static final int SUCCESSFUL_ATTEMPT_NUMBER = 3;
 
+    private final ThreadPoolTaskScheduler taskScheduler = createTaskScheduler();
+
+    private static ThreadPoolTaskScheduler createTaskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(1);
+        scheduler.setThreadNamePrefix("test-readonly-retry-");
+        scheduler.initialize();
+        return scheduler;
+    }
+
+    @AfterEach
+    void tearDown() {
+        taskScheduler.shutdown();
+    }
+
     @Test
     @DisplayName("Should establish read-only connection successfully on first attempt")
     void getConnectionAsync_healthyDataSource_returnsConnection() throws Exception {
@@ -35,7 +52,7 @@ class ReadOnlyConnectionHealthCheckTest {
         DataSource mockDataSource = mock(DataSource.class);
         when(mockDataSource.getConnection()).thenReturn(mockConnection);
 
-        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
+        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource, taskScheduler);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
         Connection result = future.get(FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -53,7 +70,7 @@ class ReadOnlyConnectionHealthCheckTest {
         DataSource mockDataSource = mock(DataSource.class);
         when(mockDataSource.getConnection()).thenReturn(mockConnection);
 
-        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
+        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource, taskScheduler);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
         Connection result = future.get(FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -77,7 +94,7 @@ class ReadOnlyConnectionHealthCheckTest {
             return mockConnection;
         });
 
-        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
+        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource, taskScheduler);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
         Connection result = future.get(RETRY_FUTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -99,7 +116,7 @@ class ReadOnlyConnectionHealthCheckTest {
             fail("Mock setup should not throw");
         }
 
-        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource);
+        ReadOnlyConnectionProvider provider = new ReadOnlyConnectionProvider(mockDataSource, taskScheduler);
         CompletableFuture<Connection> future = provider.getConnectionAsync();
 
         ExecutionException exception = assertThrows(ExecutionException.class,
