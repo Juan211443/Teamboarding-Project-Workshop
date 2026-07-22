@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import java.math.BigDecimal;
 
 @Data
@@ -16,7 +15,7 @@ import java.math.BigDecimal;
 public class Product {
     @Positive(message = "The ID must not be negative or 0")
     private long id;
-    @NonNull @NotBlank
+    @NotBlank
     private String name;
     @Min(value = 0, message = "The price must be positive")
     @NotNull(message = "The price must not be null")

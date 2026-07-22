@@ -5,7 +5,6 @@ import com.meli_juan.workshop.domain.model.Product;
 import com.meli_juan.workshop.domain.port.ProductRepository;
 import com.meli_juan.workshop.infrastructure.persistence.repository.ProductJpaRepository;
 import com.meli_juan.workshop.infrastructure.persistence.mapper.ProductEntityMapper;
-import com.meli_juan.workshop.infrastructure.util.PatchUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -57,10 +56,14 @@ public class ProductRepositoryAdapter implements ProductRepository {
     public Product patch(Product currentProduct, long id) {
         log.debug("Patching product id={}", id);
         return jpaRepository.findById(id)
-                .map(productEntity -> {
-                    Product product = entityMapper.toDomain(productEntity);
-                    PatchUtils.copyNonNullProperties(currentProduct, product);
-                    return entityMapper.toDomain(jpaRepository.save(entityMapper.toEntity(product)));
+                .map(existingEntity -> {
+                    if (currentProduct.getName() != null && !currentProduct.getName().isBlank()) {
+                        existingEntity.setName(currentProduct.getName());
+                    }
+                    if (currentProduct.getPrice() != null) {
+                        existingEntity.setPrice(currentProduct.getPrice());
+                    }
+                    return entityMapper.toDomain(jpaRepository.save(existingEntity));
                 })
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
