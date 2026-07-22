@@ -1,0 +1,7 @@
+.git
+.gitattributes
+.idea
+.DS_Store
+target
+*.iml
+README.md
