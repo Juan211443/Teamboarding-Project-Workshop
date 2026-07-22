@@ -13,7 +13,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Workshop API")
-                        .description("API REST para gestión de productos y órdenes")
+                        .description("REST API for product and order management")
                         .version("1.0.0"));
     }
 }
