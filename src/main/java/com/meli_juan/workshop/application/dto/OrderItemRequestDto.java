@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Schema(description = "Item de una orden")
+@Schema(description = "Order item")
 public class OrderItemRequestDto {
 
     @NotNull(message = "The productId must not be null")
     @Positive(message = "The productId must be positive")
-    @Schema(description = "ID del producto", example = "1")
+    @Schema(description = "Product ID", example = "1")
     private Long productId;
 
     @NotNull(message = "The quantity must not be null")
     @Min(value = 1, message = "The quantity must be at least 1")
-    @Schema(description = "Cantidad del producto", example = "2", minimum = "1")
+    @Schema(description = "Product quantity", example = "2", minimum = "1")
     private Integer quantity;
 }

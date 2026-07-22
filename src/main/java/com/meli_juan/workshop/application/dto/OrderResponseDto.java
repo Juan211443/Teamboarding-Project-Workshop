@@ -11,21 +11,21 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "DTO de respuesta de orden")
+@Schema(description = "Order response DTO")
 public class OrderResponseDto {
 
-    @Schema(description = "ID único de la orden", example = "1")
+    @Schema(description = "Unique order ID", example = "1")
     private long id;
 
-    @Schema(description = "Items de la orden")
+    @Schema(description = "Order items")
     private List<OrderItemResponseDto> items;
 
-    @Schema(description = "Precio total de la orden", example = "1999.98")
+    @Schema(description = "Total order price", example = "1999.98")
     private BigDecimal totalPrice;
 
-    @Schema(description = "Estado de la orden", example = "PENDING")
+    @Schema(description = "Order status", example = "PENDING")
     private String status;
 
-    @Schema(description = "Fecha de creación")
+    @Schema(description = "Creation date")
     private Instant createdAt;
 }

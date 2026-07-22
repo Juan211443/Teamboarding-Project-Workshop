@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Schema(description = "DTO para actualizar el estado de una orden")
+@Schema(description = "DTO for updating order status")
 public class OrderStatusUpdateDto {
 
     @NotNull(message = "The status must not be null")
-    @Schema(description = "Nuevo estado de la orden", example = "CONFIRMED",
+    @Schema(description = "New order status", example = "CONFIRMED",
             allowableValues = {"PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"})
     private String status;
 }

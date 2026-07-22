@@ -9,18 +9,18 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "DTO de respuesta de item de orden")
+@Schema(description = "Order item response DTO")
 public class OrderItemResponseDto {
 
-    @Schema(description = "ID del item", example = "1")
+    @Schema(description = "Item ID", example = "1")
     private long id;
 
-    @Schema(description = "ID del producto", example = "1")
+    @Schema(description = "Product ID", example = "1")
     private long productId;
 
-    @Schema(description = "Cantidad", example = "2")
+    @Schema(description = "Quantity", example = "2")
     private int quantity;
 
-    @Schema(description = "Subtotal del item", example = "1999.98")
+    @Schema(description = "Item subtotal", example = "1999.98")
     private BigDecimal subtotal;
 }

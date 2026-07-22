@@ -9,11 +9,11 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@Schema(description = "DTO para crear una nueva orden")
+@Schema(description = "DTO for creating a new order")
 public class OrderRequestDto {
 
     @NotEmpty(message = "The order must have at least one item")
     @Valid
-    @Schema(description = "Lista de items de la orden")
+    @Schema(description = "List of order items")
     private List<OrderItemRequestDto> items;
 }

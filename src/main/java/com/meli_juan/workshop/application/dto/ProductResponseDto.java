@@ -9,15 +9,15 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "DTO de respuesta de producto")
+@Schema(description = "Product response DTO")
 public class ProductResponseDto{
 
-    @Schema(description = "ID único del producto", example = "1")
+    @Schema(description = "Unique product ID", example = "1")
     private long id;
 
-    @Schema(description = "Nombre del producto", example = "Laptop HP")
+    @Schema(description = "Product name", example = "Laptop HP")
     private String name;
 
-    @Schema(description = "Precio del producto", example = "999.99")
+    @Schema(description = "Product price", example = "999.99")
     private BigDecimal price;
 }

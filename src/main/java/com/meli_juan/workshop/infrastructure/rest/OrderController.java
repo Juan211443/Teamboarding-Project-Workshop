@@ -35,39 +35,39 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/orders")
-@Tag(name = "Orders", description = "Operaciones para gestión de órdenes de compra")
+@Tag(name = "Orders", description = "Operations for purchase order management")
 public class OrderController {
 
     private final OrderUseCasePort orderUseCasePort;
     private final OrderResponseMapper responseMapper;
 
-    @Operation(summary = "Listar órdenes paginadas",
-            description = "Retorna una página de órdenes con paginación configurable")
-    @ApiResponse(responseCode = "200", description = "Página de órdenes obtenida exitosamente")
+    @Operation(summary = "List orders with pagination",
+            description = "Returns a page of orders with configurable pagination")
+    @ApiResponse(responseCode = "200", description = "Orders page retrieved successfully")
     @GetMapping
     public ResponseEntity<Page<OrderResponseDto>> getAll(
-            @Parameter(description = "Número de página (0-indexed)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Tamaño de página") @RequestParam(defaultValue = "10") int size
+            @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size
     ) {
         log.debug("GET /api/orders?page={}&size={}", page, size);
         return ResponseEntity.ok(orderUseCasePort.getAll(page, size).map(responseMapper::toResponse));
     }
 
-    @Operation(summary = "Obtener orden por ID")
-    @ApiResponse(responseCode = "200", description = "Orden encontrada")
-    @ApiResponse(responseCode = "404", description = "Orden no encontrada",
+    @Operation(summary = "Get order by ID")
+    @ApiResponse(responseCode = "200", description = "Order found")
+    @ApiResponse(responseCode = "404", description = "Order not found",
             content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponseDto> getById(
-            @Parameter(description = "ID de la orden") @PathVariable long id) {
+            @Parameter(description = "Order ID") @PathVariable long id) {
         log.debug("GET /api/orders/{}", id);
         return ResponseEntity.ok(responseMapper.toResponse(orderUseCasePort.getById(id)));
     }
 
-    @Operation(summary = "Crear una nueva orden",
-            description = "Crea una orden con los items especificados. Calcula el precio total automáticamente.")
-    @ApiResponse(responseCode = "201", description = "Orden creada exitosamente")
-    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
+    @Operation(summary = "Create a new order",
+            description = "Creates an order with the specified items. Total price is calculated automatically.")
+    @ApiResponse(responseCode = "201", description = "Order created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid input data",
             content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @PostMapping
     public ResponseEntity<OrderResponseDto> create(@Valid @RequestBody OrderRequestDto request) {
@@ -84,14 +84,14 @@ public class OrderController {
         return ResponseEntity.created(URI.create("/api/orders/" + response.getId())).body(response);
     }
 
-    @Operation(summary = "Actualizar estado de una orden",
-            description = "Permite cambiar el estado de la orden (PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED)")
-    @ApiResponse(responseCode = "200", description = "Estado actualizado exitosamente")
-    @ApiResponse(responseCode = "404", description = "Orden no encontrada",
+    @Operation(summary = "Update order status",
+            description = "Allows changing the order status (PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED)")
+    @ApiResponse(responseCode = "200", description = "Status updated successfully")
+    @ApiResponse(responseCode = "404", description = "Order not found",
             content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @PatchMapping("/{id}/status")
     public ResponseEntity<OrderResponseDto> updateStatus(
-            @Parameter(description = "ID de la orden") @PathVariable long id,
+            @Parameter(description = "Order ID") @PathVariable long id,
             @Valid @RequestBody OrderStatusUpdateDto statusUpdate
     ) {
         log.debug("PATCH /api/orders/{}/status - status: {}", id, statusUpdate.getStatus());
@@ -99,13 +99,13 @@ public class OrderController {
         return ResponseEntity.ok(responseMapper.toResponse(orderUseCasePort.updateStatus(id, status)));
     }
 
-    @Operation(summary = "Eliminar una orden")
-    @ApiResponse(responseCode = "204", description = "Orden eliminada exitosamente")
-    @ApiResponse(responseCode = "404", description = "Orden no encontrada",
+    @Operation(summary = "Delete an order")
+    @ApiResponse(responseCode = "204", description = "Order deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Order not found",
             content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @Parameter(description = "ID de la orden") @PathVariable long id) {
+            @Parameter(description = "Order ID") @PathVariable long id) {
         log.debug("DELETE /api/orders/{}", id);
         orderUseCasePort.delete(id);
         return ResponseEntity.noContent().build();
