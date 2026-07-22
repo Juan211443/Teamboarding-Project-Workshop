@@ -7,6 +7,13 @@ import com.meli_juan.workshop.application.mapper.ProductNullableMapper;
 import com.meli_juan.workshop.application.mapper.ProductRequestMapper;
 import com.meli_juan.workshop.application.mapper.ProductResponseMapper;
 import com.meli_juan.workshop.domain.port.ProductUseCasePort;
+import com.meli_juan.workshop.infrastructure.rest.dto.ErrorResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +35,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/products")
+@Tag(name = "Products", description = "Operaciones CRUD para gestión de productos")
 public class ProductController {
 
     private final ProductUseCasePort productUseCasePort;
@@ -35,25 +43,33 @@ public class ProductController {
     private final ProductRequestMapper requestMapper;
     private final ProductResponseMapper responseMapper;
 
-    //TODO: Swagger;
-    //TODO: Agregar entidades;
-    //TODO: Levantar backend en docker;
-
+    @Operation(summary = "Listar productos paginados",
+            description = "Retorna una página de productos con paginación configurable")
+    @ApiResponse(responseCode = "200", description = "Página de productos obtenida exitosamente")
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @Parameter(description = "Número de página (0-indexed)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamaño de página") @RequestParam(defaultValue = "10") int size
     ){
         log.debug("GET /api/products?page={}&size={}", page, size);
         return ResponseEntity.ok().body(productUseCasePort.getAll(page, size).map(responseMapper::toResponse));
     }
 
+    @Operation(summary = "Obtener producto por ID")
+    @ApiResponse(responseCode = "200", description = "Producto encontrado")
+    @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> getById(@PathVariable long id){
+    public ResponseEntity<ProductResponseDto> getById(
+            @Parameter(description = "ID del producto") @PathVariable long id){
         log.debug("GET /api/products/{}", id);
         return ResponseEntity.ok(responseMapper.toResponse(productUseCasePort.getById(id)));
     }
 
+    @Operation(summary = "Crear un nuevo producto")
+    @ApiResponse(responseCode = "201", description = "Producto creado exitosamente")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @PostMapping
     public ResponseEntity<ProductResponseDto> create(@Valid @RequestBody ProductRequestDto request){
         log.debug("POST /api/products - request: {}", request);
@@ -62,27 +78,54 @@ public class ProductController {
                 .body(response);
     }
 
+    @Operation(summary = "Actualizar un producto completamente")
+    @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente")
+    @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> update(@PathVariable long id, @Valid @RequestBody ProductRequestDto product) {
+    public ResponseEntity<ProductResponseDto> update(
+            @Parameter(description = "ID del producto") @PathVariable long id,
+            @Valid @RequestBody ProductRequestDto product) {
         log.debug("PUT /api/products/{} - request: {}", id, product);
         return ResponseEntity.ok().body(responseMapper.toResponse(productUseCasePort.update(requestMapper.toDomain(product), id)));
     }
 
+    @Operation(summary = "Actualizar parcialmente un producto",
+            description = "Solo se actualizan los campos enviados (no nulos)")
+    @ApiResponse(responseCode = "200", description = "Producto actualizado parcialmente")
+    @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> patch(@PathVariable long id, @Valid @RequestBody ProductNullableRequestDto product){
+    public ResponseEntity<ProductResponseDto> patch(
+            @Parameter(description = "ID del producto") @PathVariable long id,
+            @Valid @RequestBody ProductNullableRequestDto product){
         log.debug("PATCH /api/products/{} - request: {}", id, product);
         return ResponseEntity.ok().body(responseMapper.toResponse(productUseCasePort.patch(requestNullableMapper.toNullableDomain(product), id)));
     }
 
+    @Operation(summary = "Eliminar un producto")
+    @ApiResponse(responseCode = "204", description = "Producto eliminado exitosamente")
+    @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
+    public ResponseEntity<Void> delete(
+            @Parameter(description = "ID del producto") @PathVariable long id){
         log.debug("DELETE /api/products/{}", id);
         productUseCasePort.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Buscar producto por nombre exacto")
+    @ApiResponse(responseCode = "200", description = "Producto encontrado")
+    @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    @ApiResponse(responseCode = "409", description = "Múltiples resultados encontrados",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     @GetMapping("/searchByName")
-    public ResponseEntity<ProductResponseDto> getByName(@RequestParam String name){
+    public ResponseEntity<ProductResponseDto> getByName(
+            @Parameter(description = "Nombre del producto a buscar") @RequestParam String name){
         log.debug("GET /api/products/searchByName - request: {}", name);
         return ResponseEntity.ok().body(responseMapper.toResponse(productUseCasePort.getByName(name)));
     }
