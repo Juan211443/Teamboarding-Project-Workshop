@@ -49,15 +49,18 @@ public class OrderE2ETest {
         ProductResponseDto laptop = createProduct("E2E Laptop", 1000.00);
         ProductResponseDto mouse = createProduct("E2E Mouse", 25.00);
 
-        OrderItemRequestDto item1 = new OrderItemRequestDto();
-        item1.setProductId(laptop.getId());
-        item1.setQuantity(2);
-        OrderItemRequestDto item2 = new OrderItemRequestDto();
-        item2.setProductId(mouse.getId());
-        item2.setQuantity(3);
+        OrderItemRequestDto item1 = new OrderItemRequestDto(
+                laptop.getId(),
+                2
+        );
+        OrderItemRequestDto item2 = new OrderItemRequestDto(
+                mouse.getId(),
+                3
+        );
 
-        OrderRequestDto request = new OrderRequestDto();
-        request.setItems(List.of(item1, item2));
+        OrderRequestDto request = new OrderRequestDto(
+                List.of(item1, item2)
+        );
 
         OrderResponseDto created = getClient().post()
                 .uri("/api/orders")
@@ -67,20 +70,22 @@ public class OrderE2ETest {
                 .body(OrderResponseDto.class);
 
         assertNotNull(created);
-        assertEquals("PENDING", created.getStatus());
-        assertEquals(0, BigDecimal.valueOf(2075.00).compareTo(created.getTotalPrice()));
-        assertEquals(2, created.getItems().size());
+        assertEquals("PENDING", created.status());
+        assertEquals(0, BigDecimal.valueOf(2075.00).compareTo(created.totalPrice()));
+        assertEquals(2, created.items().size());
     }
 
     @Test
     void patch_updateStatus_returns200() {
         ProductResponseDto product = createProduct("E2E StatusProduct", 500.00);
 
-        OrderItemRequestDto item = new OrderItemRequestDto();
-        item.setProductId(product.getId());
-        item.setQuantity(1);
-        OrderRequestDto request = new OrderRequestDto();
-        request.setItems(List.of(item));
+        OrderItemRequestDto item = new OrderItemRequestDto(
+                product.getId(),
+                1
+        );
+        OrderRequestDto request = new OrderRequestDto(
+                List.of(item)
+        );
 
         OrderResponseDto created = getClient().post()
                 .uri("/api/orders")
@@ -92,15 +97,15 @@ public class OrderE2ETest {
         assertNotNull(created);
 
         OrderResponseDto updated = getClient().patch()
-                .uri("/api/orders/" + created.getId() + "/status")
+                .uri("/api/orders/" + created.id() + "/status")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("{\"status\":\"CONFIRMED\"}")
                 .retrieve()
                 .body(OrderResponseDto.class);
 
         assertNotNull(updated);
-        assertEquals("CONFIRMED", updated.getStatus());
-        assertEquals(created.getId(), updated.getId());
+        assertEquals("CONFIRMED", updated.status());
+        assertEquals(created.id(), updated.id());
     }
 
     @Test

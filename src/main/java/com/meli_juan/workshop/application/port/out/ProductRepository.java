@@ -1,6 +1,6 @@
-package com.meli_juan.workshop.domain.port;
+package com.meli_juan.workshop.application.port.out;
 
-import com.meli_juan.workshop.domain.model.Product;
+import com.meli_juan.workshop.application.domain.model.Product;
 import org.springframework.data.domain.Page;
 
 public interface ProductRepository {

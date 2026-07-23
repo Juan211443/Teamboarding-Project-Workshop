@@ -1,14 +1,14 @@
 package com.meli_juan.workshop.usecase;
 
-import com.meli_juan.workshop.domain.exception.OrderNotFoundException;
-import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
-import com.meli_juan.workshop.domain.model.Order;
-import com.meli_juan.workshop.domain.model.OrderItem;
-import com.meli_juan.workshop.domain.model.OrderStatus;
-import com.meli_juan.workshop.domain.model.Product;
-import com.meli_juan.workshop.domain.port.OrderRepository;
-import com.meli_juan.workshop.domain.port.ProductRepository;
-import com.meli_juan.workshop.domain.usecase.OrderUseCase;
+import com.meli_juan.workshop.application.domain.exception.OrderNotFoundException;
+import com.meli_juan.workshop.application.domain.exception.ProductNotFoundException;
+import com.meli_juan.workshop.application.domain.model.Order;
+import com.meli_juan.workshop.application.domain.model.OrderItem;
+import com.meli_juan.workshop.application.domain.model.OrderStatus;
+import com.meli_juan.workshop.application.domain.model.Product;
+import com.meli_juan.workshop.application.port.out.OrderRepository;
+import com.meli_juan.workshop.application.port.out.ProductRepository;
+import com.meli_juan.workshop.application.domain.usecase.OrderUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

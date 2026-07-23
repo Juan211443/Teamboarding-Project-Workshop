@@ -6,7 +6,7 @@ import com.meli_juan.workshop.application.dto.ProductResponseDto;
 import com.meli_juan.workshop.application.mapper.ProductNullableMapper;
 import com.meli_juan.workshop.application.mapper.ProductRequestMapper;
 import com.meli_juan.workshop.application.mapper.ProductResponseMapper;
-import com.meli_juan.workshop.domain.port.ProductUseCasePort;
+import com.meli_juan.workshop.application.port.in.ProductPortIn;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ import java.net.URI;
 @RequestMapping("api/products")
 public class ProductController {
 
-    private final ProductUseCasePort productUseCasePort;
+    private final ProductPortIn productUseCasePort;
     private final ProductNullableMapper requestNullableMapper;
     private final ProductRequestMapper requestMapper;
     private final ProductResponseMapper responseMapper;

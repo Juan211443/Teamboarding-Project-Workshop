@@ -1,7 +1,7 @@
 package com.meli_juan.workshop.infrastructure.persistence.mapper;
 
-import com.meli_juan.workshop.domain.model.Order;
-import com.meli_juan.workshop.domain.model.OrderItem;
+import com.meli_juan.workshop.application.domain.model.Order;
+import com.meli_juan.workshop.application.domain.model.OrderItem;
 import com.meli_juan.workshop.infrastructure.persistence.entity.OrderEntity;
 import com.meli_juan.workshop.infrastructure.persistence.entity.OrderItemEntity;
 import com.meli_juan.workshop.infrastructure.persistence.entity.ProductEntity;

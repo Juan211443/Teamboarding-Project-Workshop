@@ -1,9 +1,9 @@
 package com.meli_juan.workshop.infrastructure.persistence.adapter;
 
-import com.meli_juan.workshop.domain.exception.OrderNotFoundException;
-import com.meli_juan.workshop.domain.model.Order;
-import com.meli_juan.workshop.domain.model.OrderStatus;
-import com.meli_juan.workshop.domain.port.OrderRepository;
+import com.meli_juan.workshop.application.domain.exception.OrderNotFoundException;
+import com.meli_juan.workshop.application.domain.model.Order;
+import com.meli_juan.workshop.application.domain.model.OrderStatus;
+import com.meli_juan.workshop.application.port.out.OrderRepository;
 import com.meli_juan.workshop.infrastructure.persistence.entity.OrderEntity;
 import com.meli_juan.workshop.infrastructure.persistence.mapper.OrderEntityMapper;
 import com.meli_juan.workshop.infrastructure.persistence.repository.OrderJpaRepository;

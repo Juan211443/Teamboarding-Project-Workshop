@@ -1,4 +1,4 @@
-package com.meli_juan.workshop.domain.model;
+package com.meli_juan.workshop.application.domain.model;
 
 public enum OrderStatus {
     PENDING,

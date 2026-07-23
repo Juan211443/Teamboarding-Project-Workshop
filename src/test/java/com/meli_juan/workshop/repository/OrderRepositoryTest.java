@@ -1,6 +1,6 @@
 package com.meli_juan.workshop.repository;
 
-import com.meli_juan.workshop.domain.model.OrderStatus;
+import com.meli_juan.workshop.application.domain.model.OrderStatus;
 import com.meli_juan.workshop.infrastructure.persistence.entity.OrderEntity;
 import com.meli_juan.workshop.infrastructure.persistence.entity.OrderItemEntity;
 import com.meli_juan.workshop.infrastructure.persistence.entity.ProductEntity;

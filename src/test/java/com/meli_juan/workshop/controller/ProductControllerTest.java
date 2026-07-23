@@ -6,9 +6,9 @@ import com.meli_juan.workshop.application.dto.ProductResponseDto;
 import com.meli_juan.workshop.application.mapper.ProductNullableMapper;
 import com.meli_juan.workshop.application.mapper.ProductRequestMapper;
 import com.meli_juan.workshop.application.mapper.ProductResponseMapper;
-import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
-import com.meli_juan.workshop.domain.model.Product;
-import com.meli_juan.workshop.domain.port.ProductUseCasePort;
+import com.meli_juan.workshop.application.domain.exception.ProductNotFoundException;
+import com.meli_juan.workshop.application.domain.model.Product;
+import com.meli_juan.workshop.application.port.in.ProductPortIn;
 import com.meli_juan.workshop.infrastructure.rest.ProductController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class ProductControllerTest {
 
 
     @MockitoBean
-    ProductUseCasePort productUseCasePort;
+    ProductPortIn productUseCasePort;
 
     @Test
     void Get_getAll_oneProduct_returns200() throws Exception {

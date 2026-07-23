@@ -2,11 +2,11 @@ package com.meli_juan.workshop.infrastructure.rest;
 
 import com.meli_juan.workshop.application.dto.OrderRequestDto;
 import com.meli_juan.workshop.application.dto.OrderResponseDto;
-import com.meli_juan.workshop.application.dto.OrderStatusUpdateDto;
+import com.meli_juan.workshop.application.dto.OrderStatusUpdateRequestDto;
 import com.meli_juan.workshop.application.mapper.OrderResponseMapper;
-import com.meli_juan.workshop.domain.model.OrderItem;
-import com.meli_juan.workshop.domain.model.OrderStatus;
-import com.meli_juan.workshop.domain.port.OrderUseCasePort;
+import com.meli_juan.workshop.application.domain.model.OrderItem;
+import com.meli_juan.workshop.application.domain.model.OrderStatus;
+import com.meli_juan.workshop.application.port.in.OrderPortIn;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ import java.util.List;
 @RequestMapping("api/orders")
 public class OrderController {
 
-    private final OrderUseCasePort orderUseCasePort;
+    private final OrderPortIn orderUseCasePort;
     private final OrderResponseMapper responseMapper;
 
     @GetMapping
@@ -51,25 +51,25 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponseDto> create(@Valid @RequestBody OrderRequestDto request) {
         log.debug("POST /api/orders - request: {}", request);
-        List<OrderItem> items = request.getItems().stream()
+        List<OrderItem> items = request.items().stream()
                 .map(item -> {
                     var orderItem = new OrderItem();
-                    orderItem.setProductId(item.getProductId());
-                    orderItem.setQuantity(item.getQuantity());
+                    orderItem.setProductId(item.productId());
+                    orderItem.setQuantity(item.quantity());
                     return orderItem;
                 })
                 .toList();
         OrderResponseDto response = responseMapper.toResponse(orderUseCasePort.create(items));
-        return ResponseEntity.created(URI.create("/api/orders/" + response.getId())).body(response);
+        return ResponseEntity.created(URI.create("/api/orders/" + response.id())).body(response);
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<OrderResponseDto> updateStatus(
             @PathVariable long id,
-            @Valid @RequestBody OrderStatusUpdateDto statusUpdate
+            @Valid @RequestBody OrderStatusUpdateRequestDto statusUpdate
     ) {
-        log.debug("PATCH /api/orders/{}/status - status: {}", id, statusUpdate.getStatus());
-        OrderStatus status = OrderStatus.valueOf(statusUpdate.getStatus().toUpperCase());
+        log.debug("PATCH /api/orders/{}/status - status: {}", id, statusUpdate.status());
+        OrderStatus status = OrderStatus.valueOf(statusUpdate.status().toUpperCase());
         return ResponseEntity.ok(responseMapper.toResponse(orderUseCasePort.updateStatus(id, status)));
     }
 

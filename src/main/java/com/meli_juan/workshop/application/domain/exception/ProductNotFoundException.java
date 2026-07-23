@@ -1,4 +1,4 @@
-package com.meli_juan.workshop.domain.exception;
+package com.meli_juan.workshop.application.domain.exception;
 
 public class ProductNotFoundException extends DomainException{
     public ProductNotFoundException(Long id) {

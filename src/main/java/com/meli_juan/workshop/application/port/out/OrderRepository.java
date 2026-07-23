@@ -1,6 +1,6 @@
-package com.meli_juan.workshop.domain.port;
+package com.meli_juan.workshop.application.port.out;
 
-import com.meli_juan.workshop.domain.model.Order;
+import com.meli_juan.workshop.application.domain.model.Order;
 import org.springframework.data.domain.Page;
 
 public interface OrderRepository {

@@ -3,11 +3,11 @@ package com.meli_juan.workshop.controller;
 import com.meli_juan.workshop.application.dto.OrderResponseDto;
 import com.meli_juan.workshop.application.dto.OrderItemResponseDto;
 import com.meli_juan.workshop.application.mapper.OrderResponseMapper;
-import com.meli_juan.workshop.domain.exception.OrderNotFoundException;
-import com.meli_juan.workshop.domain.model.Order;
-import com.meli_juan.workshop.domain.model.OrderItem;
-import com.meli_juan.workshop.domain.model.OrderStatus;
-import com.meli_juan.workshop.domain.port.OrderUseCasePort;
+import com.meli_juan.workshop.application.domain.exception.OrderNotFoundException;
+import com.meli_juan.workshop.application.domain.model.Order;
+import com.meli_juan.workshop.application.domain.model.OrderItem;
+import com.meli_juan.workshop.application.domain.model.OrderStatus;
+import com.meli_juan.workshop.application.port.in.OrderPortIn;
 import com.meli_juan.workshop.infrastructure.rest.OrderController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class OrderControllerTest {
     MockMvc mvc;
 
     @MockitoBean
-    OrderUseCasePort orderUseCasePort;
+    OrderPortIn orderUseCasePort;
 
     @MockitoBean
     OrderResponseMapper orderResponseMapper;
@@ -89,9 +89,10 @@ public class OrderControllerTest {
 
     @Test
     void get_getById_orderNotExists_returns404() throws Exception {
-        when(orderUseCasePort.getById(999L)).thenThrow(new OrderNotFoundException(999L));
+        final long TEST_ID = 999L;
+        when(orderUseCasePort.getById(TEST_ID)).thenThrow(new OrderNotFoundException(999L));
 
-        mvc.perform(get("/api/orders/999"))
+        mvc.perform(get("/api/orders/" + TEST_ID))
                 .andExpect(status().isNotFound());
     }
 
@@ -116,10 +117,11 @@ public class OrderControllerTest {
 
     @Test
     void patch_updateStatus_orderNotExists_returns404() throws Exception {
-        when(orderUseCasePort.updateStatus(999L, OrderStatus.CONFIRMED))
-                .thenThrow(new OrderNotFoundException(999L));
+        long TEST_ID = 999L;
+        when(orderUseCasePort.updateStatus(TEST_ID, OrderStatus.CONFIRMED))
+                .thenThrow(new OrderNotFoundException(TEST_ID));
 
-        mvc.perform(patch("/api/orders/999/status")
+        mvc.perform(patch("/api/orders/" + TEST_ID + "/status")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"status\":\"CONFIRMED\"}"))
                 .andExpect(status().isNotFound());

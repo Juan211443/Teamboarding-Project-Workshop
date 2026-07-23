@@ -1,12 +1,12 @@
-package com.meli_juan.workshop.domain.usecase;
+package com.meli_juan.workshop.application.domain.usecase;
 
-import com.meli_juan.workshop.domain.model.Order;
-import com.meli_juan.workshop.domain.model.OrderItem;
-import com.meli_juan.workshop.domain.model.OrderStatus;
-import com.meli_juan.workshop.domain.model.Product;
-import com.meli_juan.workshop.domain.port.OrderRepository;
-import com.meli_juan.workshop.domain.port.OrderUseCasePort;
-import com.meli_juan.workshop.domain.port.ProductRepository;
+import com.meli_juan.workshop.application.domain.model.Order;
+import com.meli_juan.workshop.application.domain.model.OrderItem;
+import com.meli_juan.workshop.application.domain.model.OrderStatus;
+import com.meli_juan.workshop.application.domain.model.Product;
+import com.meli_juan.workshop.application.port.in.OrderPortIn;
+import com.meli_juan.workshop.application.port.out.OrderRepository;
+import com.meli_juan.workshop.application.port.out.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class OrderUseCase implements OrderUseCasePort {
+public class OrderUseCase implements OrderPortIn {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -75,4 +75,3 @@ public class OrderUseCase implements OrderUseCasePort {
         log.info("Order deleted: id={}", id);
     }
 }
-
