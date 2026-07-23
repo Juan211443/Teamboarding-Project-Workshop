@@ -1,8 +1,8 @@
 package com.meli_juan.workshop.infrastructure.persistence.adapter;
 
-import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
-import com.meli_juan.workshop.domain.model.Product;
-import com.meli_juan.workshop.domain.port.ProductRepository;
+import com.meli_juan.workshop.application.domain.exception.ProductNotFoundException;
+import com.meli_juan.workshop.application.domain.model.Product;
+import com.meli_juan.workshop.application.port.out.ProductRepository;
 import com.meli_juan.workshop.infrastructure.persistence.repository.ProductJpaRepository;
 import com.meli_juan.workshop.infrastructure.persistence.mapper.ProductEntityMapper;
 import com.meli_juan.workshop.infrastructure.util.PatchUtils;

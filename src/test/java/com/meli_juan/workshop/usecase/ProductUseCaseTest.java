@@ -1,9 +1,9 @@
 package com.meli_juan.workshop.usecase;
 
-import com.meli_juan.workshop.domain.exception.ProductNotFoundException;
-import com.meli_juan.workshop.domain.model.Product;
-import com.meli_juan.workshop.domain.port.ProductRepository;
-import com.meli_juan.workshop.domain.usecase.ProductUseCase;
+import com.meli_juan.workshop.application.domain.exception.ProductNotFoundException;
+import com.meli_juan.workshop.application.domain.model.Product;
+import com.meli_juan.workshop.application.port.out.ProductRepository;
+import com.meli_juan.workshop.application.domain.usecase.ProductUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

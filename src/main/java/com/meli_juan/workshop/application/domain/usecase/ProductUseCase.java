@@ -1,9 +1,9 @@
-package com.meli_juan.workshop.domain.usecase;
+package com.meli_juan.workshop.application.domain.usecase;
 
-import com.meli_juan.workshop.domain.exception.NegativePriceException;
-import com.meli_juan.workshop.domain.model.Product;
-import com.meli_juan.workshop.domain.port.ProductRepository;
-import com.meli_juan.workshop.domain.port.ProductUseCasePort;
+import com.meli_juan.workshop.application.domain.exception.NegativePriceException;
+import com.meli_juan.workshop.application.domain.model.Product;
+import com.meli_juan.workshop.application.port.in.ProductPortIn;
+import com.meli_juan.workshop.application.port.out.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-public class ProductUseCase implements ProductUseCasePort {
+public class ProductUseCase implements ProductPortIn {
     private final ProductRepository repository;
 
     public ProductUseCase(ProductRepository repository){

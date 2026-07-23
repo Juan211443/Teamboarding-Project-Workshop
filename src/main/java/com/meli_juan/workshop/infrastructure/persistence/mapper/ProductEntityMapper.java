@@ -1,6 +1,6 @@
 package com.meli_juan.workshop.infrastructure.persistence.mapper;
 
-import com.meli_juan.workshop.domain.model.Product;
+import com.meli_juan.workshop.application.domain.model.Product;
 import com.meli_juan.workshop.infrastructure.persistence.entity.ProductEntity;
 import org.mapstruct.Mapper;
 
