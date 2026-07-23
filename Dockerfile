@@ -8,7 +8,10 @@ COPY src src
 RUN ./mvnw clean package -B
 
 FROM eclipse-temurin:17-jre
+RUN groupadd -r appgroup && useradd -r -g appgroup -d /app -s /sbin/nologin appuser
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+RUN chown -R appuser:appgroup /app
+USER appuser
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=docker", "app.jar"]

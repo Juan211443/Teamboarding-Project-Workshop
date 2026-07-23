@@ -4,6 +4,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: workshopdb
+      MYSQL_USER: workshop_user
+      MYSQL_PASSWORD: workshop_secret
     ports:
       - "3307:3306"
     healthcheck:
